@@ -1,7 +1,10 @@
+import axios from "axios";
 import React, { useState } from "react"
-import { NavLink } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 
 const Register= ()=>{
+
+    const navigate = useNavigate('');
 
     const [inputValue, setInputValue] = useState({
         name: "",
@@ -23,6 +26,33 @@ const Register= ()=>{
             }
         })
     };
+
+    const addInputData =async (event) =>{
+        event.preventDefault();
+        const url = 'http://localhost:8080/register';
+        await axios.post(url, inputValue,{
+        }).then(response => {
+            console.log(response.data);
+            alert('successfully added');
+            navigate('/');
+        }).catch(error => {
+            console.log(error.response.data);
+            alert('error');
+        });
+
+        // const data = await res.json();
+        // console.log(data);
+
+        // if(res.status === 404 || !data){
+        //     alert('error');
+        //     console.log('error');
+        // }
+        // else{
+        //     alert('successfully added');
+        //     console.log('data added.')
+        // }
+    }
+
     return(
         <div className="container">
             <NavLink to='/'>Home</NavLink>
@@ -56,7 +86,7 @@ const Register= ()=>{
                         <label htmlFor="name" className="name">Description</label>
                         <textarea type='text' name="desc" value={inputValue.desc} onChange={setChange} className="form-control" id="" cols="20" rows="5"></textarea>
                     </div>
-                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button type="submit" onClick={addInputData} className="btn btn-primary">Submit</button>
                 </div>
             </form>           
         </div>

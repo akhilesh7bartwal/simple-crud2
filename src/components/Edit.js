@@ -1,8 +1,12 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom"
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { NavLink, useParams, useNavigate } from "react-router-dom"
 
 
 const Edit = ()=>{
+
+    const navigate = useNavigate();
+
     const [inputValue, setInputValue] = useState({
         name: "",
         email:"",
@@ -23,6 +27,39 @@ const Edit = ()=>{
             }
         })
     };
+
+    let {id} = useParams("");
+    console.log(inputValue);
+    const getData=async () =>{    
+        const url= `http://localhost:8080/getuser/${id}`;
+        await axios.get(url)
+        .then((response) =>{
+            
+            setInputValue(response.data);
+    //        setIsLoading(true);
+        }).catch(error =>{
+            console.log(error);
+        })
+    };
+
+    useEffect(()=>{
+        getData();
+    },[]);
+
+    const updatedData=async (event)=>{
+        event.preventDefault();
+        const url= `http://localhost:8080/updateuser/${id}`
+        await axios.patch(url,inputValue)
+        .then((response) =>{
+            alert('data updated');
+            console.log(response.data);
+            navigate('/');
+        })
+        .catch(error =>{
+            alert('error');
+            console.log(error);
+        })
+    }
 
     return(
         <div className="container">
@@ -57,7 +94,7 @@ const Edit = ()=>{
                         <label htmlFor="name" className="name">Description</label>
                         <textarea type='text' name="desc" value={inputValue.desc} onChange={setChange} className="form-control" id="" cols="20" rows="5"></textarea>
                     </div>
-                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button type="submit" onClick={updatedData} className="btn btn-primary">Submit</button>
                 </div>
             </form>           
         </div>
